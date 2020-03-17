@@ -36,12 +36,14 @@ grad = zeros(size(theta));
 %           grad = grad + YOUR_CODE_HERE (using the temp variable)
 %
 
+% build matrix for regularization
+theta_m = [0; theta(2:end,:)];
 
+% compute cost function
+J = (1/m)*sum(-y'*log(sigmoid(X*theta)) - (1-y)'*log(1 - sigmoid(X*theta))) + lambda/(2*m)*sum(theta_m.^2);
 
-
-
-
-
+% compute gradient
+grad = (1/m)*(sigmoid(X*theta) - y)'*X + (lambda/m)*theta_m';
 
 
 
