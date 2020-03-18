@@ -24,6 +24,7 @@ Theta2 = reshape(nn_params((1 + (hidden_layer_size * (input_layer_size + 1))):en
 
 % Setup some useful variables
 m = size(X, 1);
+n = num_labels;
          
 % You need to return the following variables correctly 
 J = 0;
@@ -62,22 +63,60 @@ Theta2_grad = zeros(size(Theta2));
 %               and Theta2_grad from Part 2.
 %
 
+% calculate each a(i)
+X_f = [ones(m, 1) X];
+a2 = [ones(m, 1) sigmoid(X_f*Theta1')];
+a3 = sigmoid(a2*Theta2');
+
+%% Feedforward
+
+% build theta vector
+theta1 = Theta1(:,2:end);
+theta2 = Theta2(:,2:end);
+theta_m = [theta1(:); theta2(:)];
+
+y_r = zeros(size(y));
+for i = 1:n
+    % relabel y vector
+    y_r = y==i;  
+    
+    % subset h(x)k
+    a3_k = a3(:,i);
+    
+    % calculate J by k
+    J = J + (1/m)*sum(-y_r'*log(a3_k) - (1 - y_r)'*log(1 - a3_k));
+end
+
+% include regularization
+reg = lambda/(2*m)*sum(theta_m.^2);
+J = J + reg;
 
 
+%% Backpropagation
 
+Delta1 = zeros(size(Theta1));
+Delta2 = zeros(size(Theta2));
+for i = 1:m
+    a1 = [1; X(i,:)'];
+    a2 = [1; sigmoid(Theta1*a1)];
+    a3 = sigmoid(Theta2*a2);
+    
+    y_rel = zeros(size(a3));
+    y_rel(y(i, 1)) = 1;
+    
+    delta3 = a3 - y_rel;
+    delta2 = Theta2'*delta3.*[1; sigmoidGradient(Theta1*a1)];
+    delta2 = delta2(2:end);
 
+    Delta1 = Delta1 + delta2*a1';
+    Delta2 = Delta2 + delta3*a2';
+end
 
+Theta1_nob = [zeros(size(Theta1, 1), 1), Theta1(:, 2:end)];
+Theta2_nob = [zeros(size(Theta2, 1), 1), Theta2(:, 2:end)];
 
-
-
-
-
-
-
-
-
-
-
+Theta1_grad = (1/m)*Delta1 + (lambda/m)*Theta1_nob;
+Theta2_grad = (1/m)*Delta2 + (lambda/m)*Theta2_nob;
 
 
 % -------------------------------------------------------------
