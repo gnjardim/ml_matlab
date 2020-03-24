@@ -54,9 +54,25 @@ error_val   = zeros(m, 1);
 % ---------------------- Sample Solution ----------------------
 
 
-
-
-
+for i = 1:m
+    %% Training set
+    % Get i training examples
+    X_t = X(1:i, :);
+    y_t = y(1:i, :);
+    
+    % Train linear regression
+    [theta] = trainLinearReg([ones(i, 1) X_t], y_t, lambda);
+    
+    % Compute error for training set
+    error_train(i) = linearRegCostFunction([ones(i, 1) X_t], y_t, theta, 0);
+    
+    %% Validation set
+    k = size(Xval, 1);
+    
+    % Compute error for validation set
+    error_val(i) = linearRegCostFunction([ones(k, 1) Xval], yval, theta, 0);
+    
+end
 
 
 % -------------------------------------------------------------

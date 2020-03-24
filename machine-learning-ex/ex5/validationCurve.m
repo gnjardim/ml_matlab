@@ -39,13 +39,25 @@ error_val = zeros(length(lambda_vec), 1);
 %
 %
 
-
-
-
-
-
-
-
+for i = 1:length(lambda_vec)
+    lambda = lambda_vec(i);
+    
+    %% Training set
+    m = size(X, 1);
+    
+    % Train linear regression
+    [theta] = trainLinearReg([ones(m, 1) X], y, lambda);
+    
+    % Compute error for training set
+    error_train(i) = linearRegCostFunction([ones(m, 1) X], y, theta, 0);
+    
+    %% Validation set
+    k = size(Xval, 1);
+    
+    % Compute error for validation set
+    error_val(i) = linearRegCostFunction([ones(k, 1) Xval], yval, theta, 0);
+    
+end
 
 
 % =========================================================================
