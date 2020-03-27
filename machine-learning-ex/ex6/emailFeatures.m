@@ -48,8 +48,9 @@ x = zeros(n, 1);
 %
 %
 
-
-
+for i = 1:n
+    x(i) = sum(unique(word_indices) == i);
+end
 
 
 
