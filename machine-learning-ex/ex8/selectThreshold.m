@@ -24,15 +24,26 @@ for epsilon = min(pval):stepsize:max(pval)
     %       of 0's and 1's of the outlier predictions
 
 
+    % get predictions
+    predictions = (pval < epsilon);
+    
+    % get positions of (==1)
+    pos_y = (yval == 1);
+    pos_pred = (predictions == 1);
+    
+    % get true and false positives
+    true_p  = sum(yval(pos_y) == predictions(pos_y));
+    false_p = sum(yval(pos_pred) ~= predictions(pos_pred));
+    
+    % get false negatives
+    false_n = sum(yval(predictions == 0) ~= predictions(predictions == 0));
+    
+    % compute precision and recall
+    prec   = true_p/(true_p + false_p);
+    recall = true_p/(true_p + false_n);
 
 
-
-
-
-
-
-
-
+    F1 = 2*prec*recall/(prec + recall);
 
 
     % =============================================================
